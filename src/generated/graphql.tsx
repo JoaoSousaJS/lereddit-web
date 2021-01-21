@@ -46,6 +46,7 @@ export type User = {
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   username: Scalars['String']
+  email: Scalars['String']
 }
 
 export type Mutation = {
@@ -76,7 +77,8 @@ export type MutationRegisterArgs = {
 }
 
 export type MutationLoginArgs = {
-  options: UsernamePasswordInput
+  password: Scalars['String']
+  usernameOrEmail: Scalars['String']
 }
 
 export type UserResponse = {
@@ -94,15 +96,17 @@ export type FieldError = {
 export type UsernamePasswordInput = {
   username: Scalars['String']
   password: Scalars['String']
+  email: Scalars['String']
 }
 
 export type RegularUserFragment = { __typename?: 'User' } & Pick<
   User,
-  'id' | 'username'
+  'id' | 'username' | 'email'
 >
 
 export type LoginMutationVariables = Exact<{
-  options: UsernamePasswordInput
+  usernameOrEmail: Scalars['String']
+  password: Scalars['String']
 }>
 
 export type LoginMutation = { __typename?: 'Mutation' } & {
@@ -124,8 +128,7 @@ export type LogoutMutation = { __typename?: 'Mutation' } & Pick<
 >
 
 export type RegisterMutationVariables = Exact<{
-  username: Scalars['String']
-  password: Scalars['String']
+  options: UsernamePasswordInput
 }>
 
 export type RegisterMutation = { __typename?: 'Mutation' } & {
@@ -160,11 +163,12 @@ export const RegularUserFragmentDoc = gql`
   fragment RegularUser on User {
     id
     username
+    email
   }
 `
 export const LoginDocument = gql`
-  mutation Login($options: UsernamePasswordInput!) {
-    login(options: $options) {
+  mutation Login($usernameOrEmail: String!, $password: String!) {
+    login(usernameOrEmail: $usernameOrEmail, password: $password) {
       user {
         ...RegularUser
       }
@@ -192,8 +196,8 @@ export function useLogoutMutation() {
   )
 }
 export const RegisterDocument = gql`
-  mutation Register($username: String!, $password: String!) {
-    register(options: { username: $username, password: $password }) {
+  mutation Register($options: UsernamePasswordInput!) {
+    register(options: $options) {
       user {
         ...RegularUser
       }
