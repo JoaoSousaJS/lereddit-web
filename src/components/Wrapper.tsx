@@ -3,9 +3,11 @@ import React from 'react'
 
 // import { Container } from './styles';
 
+export type WrapperVariant = 'small' | 'regular'
+
 type WrapperProps = {
   children: React.ReactNode
-  variant?: 'small' | 'regular'
+  variant?: WrapperVariant
 }
 
 export const Wrapper = ({ children, variant = 'regular' }: WrapperProps) => {
